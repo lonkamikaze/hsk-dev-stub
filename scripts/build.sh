@@ -26,7 +26,8 @@ for SRC in "$@"; do
 done
 
 # Link instructions
-files="$files${files:+$IFS}$(grep -lr '[^[:alnum:]]main[[:space:]]*(' "$@" | grep '\.c$')"
+files="$(grep -lr '[^[:alnum:]]main[[:space:]]*(' "$1" | grep '\.c$')"
+build=
 
 for file in $files; do
 	target="$file"
@@ -39,6 +40,7 @@ for file in $files; do
 	target="\${BUILDDIR}/${target%.c}\${HEXSUFX}"
 	echo "$target" | grep -qFx "$all" && continue
 	all="${all:+$all$IFS}$target"
+	build="$build $target"
 	linklist="$(awk -f scripts/includes.awk "$@" $file | cut -d: -f1 \
 		| sed -ne "$filter" -e "s:\.c\$:\${OBJSUFX}:p" \
 		| rs -TC\  )"
@@ -49,5 +51,5 @@ for file in $files; do
 "
 done
 
-echo "build: $(echo $all)"
+echo "build:$build"
 
