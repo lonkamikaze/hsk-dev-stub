@@ -1,0 +1,8 @@
+^(.*/)?\..*
+^bin.*
+^build.mk$
+.*.local$
+^doc/
+^html/
+^pdf/
+^uVision/

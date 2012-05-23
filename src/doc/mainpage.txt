@@ -1,0 +1,15 @@
+/**
+
+\mainpage HSK Electronic Device Manual
+
+This project is a stub to clone when starting the development of a new
+device.
+
+The default location for hsk_libs, which is required for compiling,
+is ../hsk_libs. Changing it without tracking it is possible by
+adjusting \c LIBDIR and \c INCDIR by setting them in \c Makefile.local.
+
+After setting the new project up, run \c uVisionsetup.sh to adopt the
+µVision project file.
+
+*/
