@@ -10,6 +10,8 @@ if [ -z "$LIBDIR" ]; then
 	eval "$(sed -Ene '/LIBDIR=/s/LIBDIR=[[:space:]]*(.*)/LIBDIR="\1"/p' \
 			Makefile Makefile.local)"
 fi
+libs=$(basename ${LIBDIR%/src})
+LIBS=$(echo $libs | tr '[:lower:]' '[:upper:]')
 
 replace="
 TargetName:$PROJECT
