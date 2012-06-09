@@ -10,6 +10,17 @@ BEGIN {
 	count[-1] =  0
 	count[0] = 0
 	selection[ROOT] = 1
+	for (i = 1; i < ARGC; i++) {
+		if (ARGV[i] ~ /^-/) {
+			p = 1 * p
+			commands[p] = ARGV[i]
+			sub(/-/, "", commands[p])
+			sub(/:.*/, "", commands[p])
+			arguments[p] = ARGV[i]
+			sub(/[^:]*(:|$)/, "", arguments[p++])
+			delete ARGV[i]
+		}
+	}
 }
 
 #
@@ -103,7 +114,7 @@ ident, node, ns, i, attrib, attribs, value) {
 			for (node in selection) {
 				delete selection[node]
 				for (i = 0; children[node, i]; i++) {
-					if (tagNames[children[node, i]] ~ "^" ident "$") {
+					if (tags[children[node, i]] ~ "^" ident "$") {
 						ns[children[node, i]]
 					}
 				}
@@ -187,14 +198,20 @@ node, i, lastSelection, matches) {
 	}
 }
 
-function cmdSetContent(value,
+#
+# Changes the content of a node.
+#
+function cmdSet(value,
 node) {
 	for (node in selection) {
 		contents[node] = value
 	}
 }
 
-function cmdSetAttrib(str,
+#
+# Changes an attribute of a node.
+#
+function cmdAttrib(str,
 node, i, name) {
 	name = str
 	sub(/=.*/, "", name)
@@ -211,10 +228,11 @@ node, i, name) {
 }
 
 #
-# Creates a new node, uses the same syntax as cmdSelect() does.
+# Inserts new nodes into all selected nodes, uses the same syntax as
+# cmdSelect() does.
 #
 function cmdInsert(str,
-node, name, attributes, value, attribute, count, i) {
+node, name, attributes, value, count, i, insert) {
 	name = str
 	sub(/[\[=].*/, "", name)
 	sub(/^[^\[=]*/, "", str)
@@ -222,6 +240,7 @@ node, name, attributes, value, attribute, count, i) {
 		attributes = str
 		sub(/\[/, "", attributes)
 		sub(/\]($|=)/, "", attributes)
+		count = explode(attributes, attributes)
 		if (str ~ /\]=/) {
 			sub(/.*\]=/, "=", str)
 		} else {
@@ -231,15 +250,68 @@ node, name, attributes, value, attribute, count, i) {
 	value = str
 	sub(/^=/, "", value)
 
-	print "NAME " name
-	print "ATTR " attributes
-	print "VAL  " value
+	# Free the list of recently inserted nodes
+	for (node in inserted) {
+		delete inserted[node]
+	}
 
+	# The new nodes simply are numbered instead of having structured
+	# IDs. Because the node can only have one parent it needs to be
+	# created for each selection to insert.
 	for (node in selection) {
-		#TODO
+		insert = "NEW" newNodes++
+		# Remember which nodes were inserted into the tree
+		inserted[insert]
+		# Set name and value
+		tags[insert] = name
+		contents[insert] = value
+		# Set attributes
+		for (i = 0; i < count; i++) {
+			attributeNames[insert, i] = attributes[i]
+			sub(/=.*/, "", attributeNames[insert, i])
+			attributeValues[insert, i] = attributes[i]
+			sub(/[^=]*=/, "", attributeValues[insert, i])
+		}
+		# Record parent
+		parent[insert] = node
+		# Hook into tree (i.e. add as a child to the current selection
+		for (i = 0; children[node, i]; i++);
+		children[node, i] = insert
 	}
 }
 
+#
+# Select the nodes created during the last insert operation.
+#
+function cmdSelectInserted(,
+node) {
+	for (node in selection) {
+		delete selection[node]
+	}
+	for (node in inserted) {
+		selection[node]
+	}
+}
+
+#
+# Unhooks a selected node from the tree, it's still there and can be navigated
+# out of by selecting "..".
+#
+function cmdDelete(,
+node, i) {
+	# Delete the selected nodes
+	for (node in selection) {
+		for (i = 0; children[parent[node], i] != node; i++);
+		for (; children[parent[node], i + 1]; i++) {
+			children[parent[node], i] = children[parent[node], i + 1]
+		}
+		delete children[parent[node], i]
+	}
+}
+
+#
+# Print the current selection.
+#
 function cmdPrint(,
 node) {
 	for (node in selection) {
@@ -259,7 +331,7 @@ prefix, i, p) {
 	# Print all children and the node
 	for (i = 0; children[node, i]; i++) {
 		# Indent and opening tag
-		printf "%s<%s", prefix, tagNames[children[node, i]]
+		printf "%s<%s", prefix, tags[children[node, i]]
 		# Attributes
 		for (p = 0; attributeNames[children[node, i], p]; p++) {
 			printf " %s=\"%s\"", attributeNames[children[node, i], p], escape(attributeValues[children[node, i], p])
@@ -271,16 +343,16 @@ prefix, i, p) {
 			# Recursively print children of this child
 			printNode(indent + 1, children[node, i])
 			# Close tag
-			printf "%s</%s>\n", prefix, tagNames[children[node, i]]
+			printf "%s</%s>\n", prefix, tags[children[node, i]]
 		}
 		# Current child only has content
 		else if (contents[children[node, i]]) {
 			# Close opening tag, print content and add closing
 			# tag all in the same line
-			printf ">%s</%s>\n", contents[children[node, i]], tagNames[children[node, i]]
+			printf ">%s</%s>\n", contents[children[node, i]], tags[children[node, i]]
 		}
 		# Current child ends with starts with <?
-		else if (tagNames[children[node, i]] ~ /^\?/) {
+		else if (tags[children[node, i]] ~ /^\?/) {
 			printf " ?>\n"
 		}
 		# Current child is empty
@@ -301,8 +373,8 @@ prefix, i, p) {
 # c = count
 #
 # Properties:
-# tagNames [d, c]
-# tagValues [d, c]
+# tags [d, c]
+# contents [d, c]
 # attributeNames [d, c, i]
 # attributeValues [d, c, i]
 # children [d, c, i]
@@ -340,7 +412,7 @@ prefix, i, p) {
 
 			# Name of the tag
 			sub(/[[:space:]].*/, "", tagName)
-			tagNames[current] = tagName
+			tags[current] = tagName
 
 			# Get attributes
 			tagAttributes = tag
@@ -368,9 +440,24 @@ prefix, i, p) {
 }
 
 END {
-	cmdSearch("Groups/Group")
-	cmdSelect("..")
-	cmdPrint()
-	cmdInsert("for[bar=baz=boz]")
+	for (i = 0; commands[i]; i++) {
+		if (commands[i] == "select") {
+			cmdSelect(arguments[i])
+		} else if (commands[i] == "search") {
+			cmdSearch(arguments[i])
+		} else if (commands[i] == "set") {
+			cmdSet(arguments[i])
+		} else if (commands[i] == "attrib") {
+			cmdAttrib(arguments[i])
+		} else if (commands[i] == "insert") {
+			cmdInsert(arguments[i])
+		} else if (commands[i] == "selectInserted") {
+			cmdSelectInserted(arguments[i])
+		} else if (commands[i] == "delete") {
+			cmdDelete(arguments[i])
+		} else if (commands[i] == "print") {
+			cmdPrint(arguments[i])
+		}
+	}
 }
 
