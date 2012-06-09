@@ -15,18 +15,8 @@ LIBS=$(echo $libs | tr '[:lower:]' '[:upper:]')
 
 # Get required .c files from the libraries.
 for lib in $(
-	find -s src/ -name \*.c | xargs awk -f scripts/includes.awk src/ "$LIBDIR/" \
-		| sed -En "
-/:/s/[^:]*://
-t list
-b
-:list
-s,^[[:space:]]*,,
-s,[[:space:]]$,,
-s,[[:space:]]+,\\$IFS,g
-s,(^|[[:cntrl:]])src/[^[:space:][:cntrl:]]*,,g
-s,\\.h($|[[:cntrl:]]),.c,gp
-" | sort -u); do
+	find src/ -name \*.c | xargs awk -f scripts/includes.awk src/ "$LIBDIR/" \
+		| sed -ne "/^src\//d" -e "s,\.[ch]:.*,.c,p" | sort -u); do
 	test ! -f "$lib" && continue
 	libdeps="$libdeps
 -insert:File
@@ -36,7 +26,41 @@ s,\\.h($|[[:cntrl:]]),.c,gp
 -insert:FilePath=../$lib
 -select:.."
 	incpaths="$incpaths${incpaths:+;}../${lib%/*}"
+	incfiles="$incfiles${IFS}$lib"
 done
+
+overlays="$(awk '
+BEGIN {RS = ";"}
+
+{
+	gsub(/\/\*[^*]*([^*]*\*[^\/])*\*\//, "")
+	gsub(/[[:space:][:cntrl:]]+/, "")
+	gsub(/^[{}]*/, "")
+	gsub(/[{}]*$/, "")
+}
+
+/^hsk_isr[0-9]+\.[[:alnum:]]+=&[[:alnum:]_]+$/ {
+	sub(/^/, "ISR_")
+	sub(/\..*=&/, " ! ")
+	overlays[$0]
+}
+
+/^hsk_timer[0-9]+_setup\(.*,&[[:alnum:]_]+\)$/ {
+	sub(/^/, "ISR_")
+	sub(/_setup\(.*,&/, " ! ")
+	sub(/\)$/, "")
+	overlays[$0]
+}
+
+END {
+	for (overlay in overlays) {
+		if (count++) {
+			printf ",\r\n"
+		}
+		printf "%s", overlay
+	}
+}
+' $incfiles)"
 
 cp uVision/hsk_dev.uvproj uVision/hsk_dev.uvproj.bak
 awk -f scripts/xml.awk uVision/hsk_dev.uvproj.bak \
@@ -48,6 +72,9 @@ awk -f scripts/xml.awk uVision/hsk_dev.uvproj.bak \
 	-select:/ \
 	-search:IncludePath \
 	-set:"../$LIBDIR" \
+	-select:/ \
+	-search:OverlayString \
+	-set:"$overlays" \
 	-select:/ \
 	-search:"Group/GroupName=HSK_LIBS/.." \
 	-search:IncludePath \

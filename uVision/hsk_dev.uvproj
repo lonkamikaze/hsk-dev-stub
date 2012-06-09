@@ -317,10 +317,7 @@
             <CaseSensitiveSymbols>0</CaseSensitiveSymbols>
             <WarningLevel>2</WarningLevel>
             <DataOverlaying>1</DataOverlaying>
-            <OverlayString>ISR_hsk_isr5 ! (hsk_pwc_isr_cctOverflow),
-ISR_hsk_isr6 ! (hsk_adc_isr, hsk_adc_isr_warmup),
-ISR_hsk_isr9 ! (hsk_pwc_isr_cc0, hsk_pwc_isr_cc1, hsk_pwc_isr_cc2, hsk_pwc_isr_cc3),
-ISR_hsk_isr14 ! (hsk_nmipll_isr, hsk_flash_isr_nmiflash)</OverlayString>
+            <OverlayString>ISR_hsk_isr14 ! hsk_nmipll_isr</OverlayString>
             <MiscControls></MiscControls>
             <DisableWarningNumbers>15, 16</DisableWarningNumbers>
             <LinkerCmdFile></LinkerCmdFile>
