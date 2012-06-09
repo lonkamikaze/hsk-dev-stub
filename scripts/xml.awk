@@ -12,6 +12,10 @@ BEGIN {
 	selection[ROOT] = 1
 }
 
+#
+# Split a string containing attributes into a string array with
+# "attribute=value" entries.
+#
 function explode(str, results,
 i, array, quoted, count) {
 	split(str, array)
@@ -52,7 +56,7 @@ function escape(str) {
 # This function lets you define a selection filter.
 #
 function cmdSelect(str,
-ident, node, ns, i, attrib, value) {
+ident, node, ns, i, attrib, attribs, value) {
 	gsub(/\/+/, "/", str)
 
 	while (length(str)) {
@@ -112,14 +116,24 @@ ident, node, ns, i, attrib, value) {
 			ident = attrib
 
 			# Select tags with an attribute
-			while (ident ~ /\[[[:alnum:]]*=.*\]/) {
+			if (ident ~ /\[.*=.*\]/) {
 				attrib = ident
-				value = attrib
-				sub(/[^\[]*\[/, "", attrib)
+				sub(/[^[]*\[/, "", attrib)
+				sub(/\]($|=)/, "", attrib)
+				explode(attrib, attribs)
+				if (ident ~ /\]=/) {
+					sub(/.*\]=/, "=" , ident)
+				} else {
+					ident = ""
+				}
+			}
+
+			# Check the detected attributes
+			for (attrib in attribs) {
+				value = attribs[attrib]
+				attrib = value
 				sub(/=.*/, "", attrib)
 				sub(/[^=]*=/, "", value)
-				sub(/\].*/, "", value)
-				sub(/[^\]]*\]/, "", ident)
 
 				for (node in selection) {
 					delete selection[node]
@@ -173,46 +187,122 @@ node, i, lastSelection, matches) {
 	}
 }
 
+function cmdSetContent(value,
+node) {
+	for (node in selection) {
+		contents[node] = value
+	}
+}
+
+function cmdSetAttrib(str,
+node, i, name) {
+	name = str
+	sub(/=.*/, "", name)
+	sub(/[^=]*=/, "", str)
+	for (node in selection) {
+		# Seek the attribute
+		for (i = 0; attributeNames[node, i] && attributeNames[node, i] != name; i++);
+		# The clever part is, that i either points behind the other
+		# attributes or to the attribute that has to be updated, either
+		# way it can just be overwritten.
+		attributeNames[node, i] = name
+		attributeValues[node, i] = str
+	}
+}
+
+#
+# Creates a new node, uses the same syntax as cmdSelect() does.
+#
+function cmdInsert(str,
+node, name, attributes, value, attribute, count, i) {
+	name = str
+	sub(/[\[=].*/, "", name)
+	sub(/^[^\[=]*/, "", str)
+	if (str ~ /^\[.*\]/) {
+		attributes = str
+		sub(/\[/, "", attributes)
+		sub(/\]($|=)/, "", attributes)
+		if (str ~ /\]=/) {
+			sub(/.*\]=/, "=", str)
+		} else {
+			str = ""
+		}
+	}
+	value = str
+	sub(/^=/, "", value)
+
+	print "NAME " name
+	print "ATTR " attributes
+	print "VAL  " value
+
+	for (node in selection) {
+		#TODO
+	}
+}
+
 function cmdPrint(,
 node) {
 	for (node in selection) {
 		printNode(0, node)
-		print
 	}
 }
 
+#
+# Prints children and contents of the given node
+#
 function printNode(indent, node,
 prefix, i, p) {
+	# Create indention string
 	for (i = 0; i < indent; i++) {
 		prefix = INDENT prefix
 	}
+	# Print all children and the node
 	for (i = 0; children[node, i]; i++) {
+		# Indent and opening tag
 		printf "%s<%s", prefix, tagNames[children[node, i]]
+		# Attributes
 		for (p = 0; attributeNames[children[node, i], p]; p++) {
 			printf " %s=\"%s\"", attributeNames[children[node, i], p], escape(attributeValues[children[node, i], p])
 		}
+		# Current child has children
 		if (children[children[node, i], 0]) {
+			# Close openining tag
 			printf ">\n"
+			# Recursively print children of this child
 			printNode(indent + 1, children[node, i])
+			# Close tag
 			printf "%s</%s>\n", prefix, tagNames[children[node, i]]
-		} else if (contents[children[node, i]]) {
+		}
+		# Current child only has content
+		else if (contents[children[node, i]]) {
+			# Close opening tag, print content and add closing
+			# tag all in the same line
 			printf ">%s</%s>\n", contents[children[node, i]], tagNames[children[node, i]]
-		} else if (tagNames[children[node, i]] ~ /^\?/) {
+		}
+		# Current child ends with starts with <?
+		else if (tagNames[children[node, i]] ~ /^\?/) {
 			printf " ?>\n"
-		} else {
+		}
+		# Current child is empty
+		else {
 			printf " />\n"
 		}
 	}
-	printf "%s", contents[node]
+	# Print contents of the node
+	if (contents[node]) {
+		printf "%s%s\n", prefix, contents[node]
+	}
 }
 
 # Parse the XML tree
 #
+# Abbreviations:
+# d = depth
+# c = count
+#
 # Properties:
-# tags [d, c]
 # tagNames [d, c]
 # tagValues [d, c]
-# attributes [d, c, name]: value
 # attributeNames [d, c, i]
 # attributeValues [d, c, i]
 # children [d, c, i]
@@ -246,7 +336,6 @@ prefix, i, p) {
 			children[parent[current], i] = depth SUBSEP count[depth]
 
 			# Raw tag
-			tags[current] = tag
 			tagName = tag
 
 			# Name of the tag
@@ -263,7 +352,7 @@ prefix, i, p) {
 				sub(/=.*/, "", attributeName)
 				attributeValue = tagAttributesArray[i]
 				sub(/[^=]*=/, "", attributeValue)
-				attributes[current, attributeName] = attributeValue
+				#attributes[current, attributeName] = attributeValue
 				attributeNames[current, i] = attributeName
 				attributeValues[current, i] = attributeValue
 			}
@@ -279,7 +368,9 @@ prefix, i, p) {
 }
 
 END {
-	cmdSearch("Groups")
+	cmdSearch("Groups/Group")
+	cmdSelect("..")
 	cmdPrint()
+	cmdInsert("for[bar=baz=boz]")
 }
 
