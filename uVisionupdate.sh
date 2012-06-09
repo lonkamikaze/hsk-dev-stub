@@ -60,7 +60,7 @@ END {
 		printf "%s", overlay
 	}
 }
-' $incfiles)"
+' $incfiles $(find src/ -name \*.c))"
 
 cp uVision/hsk_dev.uvproj uVision/hsk_dev.uvproj.bak
 awk -f scripts/xml.awk uVision/hsk_dev.uvproj.bak \
