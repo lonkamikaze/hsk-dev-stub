@@ -317,7 +317,7 @@
             <CaseSensitiveSymbols>0</CaseSensitiveSymbols>
             <WarningLevel>2</WarningLevel>
             <DataOverlaying>1</DataOverlaying>
-            <OverlayString>ISR_hsk_isr14 ! hsk_nmipll_isr</OverlayString>
+            <OverlayString>ISR_hsk_isr14 ! (hsk_nmipll_isr)</OverlayString>
             <MiscControls></MiscControls>
             <DisableWarningNumbers>15, 16</DisableWarningNumbers>
             <LinkerCmdFile></LinkerCmdFile>

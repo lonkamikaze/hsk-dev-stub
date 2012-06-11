@@ -29,38 +29,7 @@ for lib in $(
 	incfiles="$incfiles${IFS}$lib"
 done
 
-overlays="$(awk '
-BEGIN {RS = ";"}
-
-{
-	gsub(/\/\*[^*]*([^*]*\*[^\/])*\*\//, "")
-	gsub(/[[:space:][:cntrl:]]+/, "")
-	gsub(/^[{}]*/, "")
-	gsub(/[{}]*$/, "")
-}
-
-/^hsk_isr[0-9]+\.[[:alnum:]]+=&[[:alnum:]_]+$/ {
-	sub(/^/, "ISR_")
-	sub(/\..*=&/, " ! ")
-	overlays[$0]
-}
-
-/^hsk_timer[0-9]+_setup\(.*,&[[:alnum:]_]+\)$/ {
-	sub(/^/, "ISR_")
-	sub(/_setup\(.*,&/, " ! ")
-	sub(/\)$/, "")
-	overlays[$0]
-}
-
-END {
-	for (overlay in overlays) {
-		if (count++) {
-			printf ",\r\n"
-		}
-		printf "%s", overlay
-	}
-}
-' $incfiles $(find src/ -name \*.c))"
+overlays="$(awk -f scripts/overlays.awk $incfiles $(find src/ -name \*.c))"
 
 cp uVision/hsk_dev.uvproj uVision/hsk_dev.uvproj.bak
 awk -f scripts/xml.awk uVision/hsk_dev.uvproj.bak \
