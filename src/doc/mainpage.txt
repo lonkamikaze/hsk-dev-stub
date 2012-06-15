@@ -9,7 +9,13 @@ The default location for hsk_libs, which is required for compiling,
 is ../hsk_libs. Changing it without tracking it is possible by
 adjusting \c LIBDIR and \c INCDIR by setting them in \c Makefile.local.
 
-After setting the new project up, run \c uVisionsetup.sh to adopt the
-µVision project file.
+After setting the new project up, run \c uVisionupdate.sh to update the
+µVision project file. The \c uVisionupdate.sh script also generates
+the list of ISR callbacks for µVision's call tree/overlaying engine.
+
+The list generation only recognizes direct assignments to
+<tt>hsk_isr<number>.<SOURCE></tt> and calls to <tt>hsk_timer[01]_setup()</tt>.
+More complex assignments might require an update of
+<tt>scripts/overlays.awk</tt>.
 
 */
