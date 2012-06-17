@@ -10,6 +10,11 @@ if [ -z "$LIBDIR" ]; then
 	eval "$(sed -Ene '/LIBDIR=/s/LIBDIR=[[:space:]]*(.*)/LIBDIR="\1"/p' \
 			Makefile Makefile.local)"
 fi
+CANDIR=$(make -VCANDIR 2> /dev/null)
+if [ -z "$CANDIR" ]; then
+	eval "$(sed -Ene '/CANDIR=/s/CANDIR=[[:space:]]*(.*)/CANDIR="\1"/p' \
+			Makefile Makefile.local)"
+fi
 libs=$(basename ${LIBDIR%/src})
 LIBS=$(echo $libs | tr '[:lower:]' '[:upper:]')
 
@@ -40,7 +45,7 @@ awk -f scripts/xml.awk uVision/hsk_dev.uvproj.bak \
 	-set:"$project" \
 	-select:/ \
 	-search:IncludePath \
-	-set:"../$LIBDIR" \
+	-set:"../$LIBDIR;../$CANDIR" \
 	-select:/ \
 	-search:OverlayString \
 	-set:"$overlays" \
