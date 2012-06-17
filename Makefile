@@ -40,6 +40,7 @@ html: doc
 doc: ${SRC} doxygen.conf
 	@rm -rf doc || true
 	@mkdir -p doc
+	@echo PROJECT_NAME=${PROJECT} > doc/.conf
 	@echo PROJECT_NUMBER=${VERSION} >> doc/.conf
 	@cat doxygen.conf doc/.conf | doxygen -
 
