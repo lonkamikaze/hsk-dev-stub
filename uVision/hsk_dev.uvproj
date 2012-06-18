@@ -327,7 +327,7 @@ ISR_hsk_isr14 ! (hsk_nmipll_isr)</OverlayString>
             <Assign></Assign>
             <ReserveString></ReserveString>
             <CClasses></CClasses>
-            <UserClasses></UserClasses>
+            <UserClasses>PDATA (X:0xF000-X:0xF0FF)</UserClasses>
             <CSection></CSection>
             <UserSection></UserSection>
             <CodeBaseAddress></CodeBaseAddress>
