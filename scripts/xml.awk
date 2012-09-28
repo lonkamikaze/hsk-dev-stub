@@ -10,6 +10,7 @@ BEGIN {
 	count[-1] =  0
 	count[0] = 0
 	selection[ROOT] = 1
+	uVisionsugar = 1
 	for (i = 1; i < ARGC; i++) {
 		if (ARGV[i] ~ /^-/) {
 			p = 1 * p
@@ -219,7 +220,7 @@ node, i, name) {
 	for (node in selection) {
 		# Seek the attribute
 		for (i = 0; attributeNames[node, i] && attributeNames[node, i] != name; i++);
-		# The clever part is, that i either points behind the other
+		# The clever part is, that it either points behind the other
 		# attributes or to the attribute that has to be updated, either
 		# way it can just be overwritten.
 		attributeNames[node, i] = name
@@ -330,6 +331,10 @@ prefix, i, p) {
 	}
 	# Print all children and the node
 	for (i = 0; children[node, i]; i++) {
+		# µVision separates tags on this level by a newline
+		if (uVisionsugar && parent[node] == "-1" SUBSEP "-1") {
+			printf "\n"
+		}
 		# Indent and opening tag
 		printf "%s<%s", prefix, tags[children[node, i]]
 		# Attributes
@@ -357,8 +362,19 @@ prefix, i, p) {
 		}
 		# Current child is empty
 		else {
-			printf " />\n"
+			# Not so compact style, used by µVision
+			if (uVisionsugar) {
+				printf "></%s>\n", tags[children[node, i]]
+			}
+			# Compact style
+			else {
+				printf " />\n"
+			}
 		}
+	}
+	# µVision separates tags on this level by a newline
+	if (uVisionsugar && parent[node] == "-1" SUBSEP "-1") {
+		printf "\n"
 	}
 	# Print contents of the node
 	if (contents[node]) {

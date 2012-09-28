@@ -319,8 +319,8 @@
             <CaseSensitiveSymbols>0</CaseSensitiveSymbols>
             <WarningLevel>2</WarningLevel>
             <DataOverlaying>1</DataOverlaying>
-            <OverlayString>* ~ (hsk_nmipll_isr),
-ISR_hsk_isr14 ! (hsk_nmipll_isr)</OverlayString>
+            <OverlayString>* ~ (hsk_boot_isr_nmipll),
+ISR_hsk_isr14 ! (hsk_boot_isr_nmipll)</OverlayString>
             <MiscControls></MiscControls>
             <DisableWarningNumbers>16</DisableWarningNumbers>
             <LinkerCmdFile></LinkerCmdFile>
@@ -351,9 +351,9 @@ ISR_hsk_isr14 ! (hsk_nmipll_isr)</OverlayString>
           <GroupName>DOC</GroupName>
           <Files>
             <File>
-              <FileName>mainpage.dtxt</FileName>
+              <FileName>mainpage.txt</FileName>
               <FileType>5</FileType>
-              <FilePath>..\src\doc\mainpage.dtxt</FilePath>
+              <FilePath>..\src\doc\mainpage.txt</FilePath>
             </File>
           </Files>
         </Group>
@@ -383,8 +383,8 @@ ISR_hsk_isr14 ! (hsk_nmipll_isr)</OverlayString>
               <ModuleSelection>0</ModuleSelection>
               <IncludeInBuild>2</IncludeInBuild>
               <AlwaysBuild>2</AlwaysBuild>
-              <GenerateAssemblyFile>1</GenerateAssemblyFile>
-              <AssembleAssemblyFile>1</AssembleAssemblyFile>
+              <GenerateAssemblyFile>2</GenerateAssemblyFile>
+              <AssembleAssemblyFile>2</AssembleAssemblyFile>
               <PublicsOnly>2</PublicsOnly>
               <StopOnExitCode>11</StopOnExitCode>
               <CustomArgument></CustomArgument>
