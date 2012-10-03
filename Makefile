@@ -1,10 +1,13 @@
 BUILDDIR=	bin.sdcc
 CC=		sdcc
-CFLAGS=		-mmcs51 --xram-loc 0xF000 --xram-size 3072 -I${INCDIR} -I${CANDIR} -I${LIBDIR}
+CFLAGS=		-mmcs51 --peep-file ${LIBPROJDIR}/peeprules.sdcc --xram-loc 0xF000 --xram-size 3072 -I${INCDIR} -I${CANDIR} -I${LIBDIR}
 
-INCDIR=		../hsk_libs/inc
-LIBDIR=		../hsk_libs/src
-CANDIR=		../CAN/src
+LIBPROJDIR=	../hsk_libs
+CANPROJDIR=	../CAN
+
+INCDIR=		${LIBPROJDIR}/inc
+LIBDIR=		${LIBPROJDIR}/src
+CANDIR=		${CANPROJDIR}/src
 
 OBJSUFX=	.rel
 HEXSUFX=	.hex
