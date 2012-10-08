@@ -31,11 +31,19 @@ include Makefile.local
 
 build:
 
-_BUILD_MK:=	$(shell sh scripts/build.sh src/ ${LIBDIR}/ ${CANDIR}/ > build.mk)
-_BUILD_MK!=	sh scripts/build.sh src/ ${LIBDIR}/ ${CANDIR}/ > build.mk
+_BUILD_MK:=	$(shell sh ${LIBPROJDIR}/scripts/build.sh src/ ${LIBDIR}/ ${CANDIR}/ > build.mk)
+_BUILD_MK!=	sh ${LIBPROJDIR}/scripts/build.sh src/ ${LIBDIR}/ ${CANDIR}/ > build.mk
 
 # Gmake style, works with FreeBSD make, too
 include build.mk
+
+printEnv:
+	@echo export PROJECT=\"${PROJECT}\"
+	@echo export LIBPROJDIR=\"${LIBPROJDIR}\"
+	@echo export CANPROJDIR=\"${CANPROJDIR}\"
+	@echo export INCDIR=\"${INCDIR}\"
+	@echo export LIBDIR=\"${LIBDIR}\"
+	@echo export CANDIR=\"${CANDIR}\"
 
 html: doc
 	@rm -rf html
