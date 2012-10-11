@@ -144,7 +144,7 @@ awk -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvproj.bak \
 	-search:OutputName \
 	-set:"$project" \
 	-select:/ \
-	-search:IncludePath \
+	-search:Target51/C51/VariousControls/IncludePath \
 	-set:"..\\$LIBDIR;..\\$CANDIR" \
 	-select:/ \
 	-search:OverlayString \

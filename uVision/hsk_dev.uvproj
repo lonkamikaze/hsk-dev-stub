@@ -32,7 +32,7 @@
           <SFDFile></SFDFile>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
-          <IncludePath>..\..\hsk_libs\src;..\..\CAN\src</IncludePath>
+          <IncludePath></IncludePath>
           <LibPath></LibPath>
           <RegisterFilePath>Infineon\</RegisterFilePath>
           <DBRegisterFilePath>Infineon\</DBRegisterFilePath>
@@ -309,7 +309,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\hsk_libs\src;..\..\CAN\src</IncludePath>
+              <IncludePath></IncludePath>
             </VariousControls>
           </Ax51>
           <Lx51>
