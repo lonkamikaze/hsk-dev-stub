@@ -32,7 +32,7 @@
           <SFDFile></SFDFile>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
-          <IncludePath>../../hsk_libs/src;../../CAN/src</IncludePath>
+          <IncludePath>..\..\hsk_libs\src;..\..\CAN\src</IncludePath>
           <LibPath></LibPath>
           <RegisterFilePath>Infineon\</RegisterFilePath>
           <DBRegisterFilePath>Infineon\</DBRegisterFilePath>
@@ -297,7 +297,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>../../hsk_libs/src;../../CAN/src</IncludePath>
+              <IncludePath>..\..\hsk_libs\src;..\..\CAN\src</IncludePath>
             </VariousControls>
           </C51>
           <Ax51>
@@ -309,7 +309,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>../../hsk_libs/src;../../CAN/src</IncludePath>
+              <IncludePath>..\..\hsk_libs\src;..\..\CAN\src</IncludePath>
             </VariousControls>
           </Ax51>
           <Lx51>
@@ -321,8 +321,8 @@
             <DataOverlaying>1</DataOverlaying>
             <OverlayString>* ~ (hsk_boot_isr_nmipll),
 ISR_hsk_isr14 ! (hsk_boot_isr_nmipll)</OverlayString>
-            <MiscControls></MiscControls>
-            <DisableWarningNumbers>16</DisableWarningNumbers>
+            <MiscControls>REMOVEUNUSED</MiscControls>
+            <DisableWarningNumbers></DisableWarningNumbers>
             <LinkerCmdFile></LinkerCmdFile>
             <Assign></Assign>
             <ReserveString></ReserveString>
@@ -373,69 +373,27 @@ ISR_hsk_isr14 ! (hsk_boot_isr_nmipll)</OverlayString>
           </Files>
         </Group>
         <Group>
-          <GroupName>HSK_LIBS</GroupName>
-          <GroupOption>
-            <CommonProperty>
-              <UseCPPCompiler>0</UseCPPCompiler>
-              <RVCTCodeConst>0</RVCTCodeConst>
-              <RVCTZI>0</RVCTZI>
-              <RVCTOtherData>0</RVCTOtherData>
-              <ModuleSelection>0</ModuleSelection>
-              <IncludeInBuild>2</IncludeInBuild>
-              <AlwaysBuild>2</AlwaysBuild>
-              <GenerateAssemblyFile>2</GenerateAssemblyFile>
-              <AssembleAssemblyFile>2</AssembleAssemblyFile>
-              <PublicsOnly>2</PublicsOnly>
-              <StopOnExitCode>11</StopOnExitCode>
-              <CustomArgument></CustomArgument>
-              <IncludeLibraryModules></IncludeLibraryModules>
-              <BankNo>65535</BankNo>
-            </CommonProperty>
-            <Group51>
-              <C51>
-                <RegisterColoring>2</RegisterColoring>
-                <VariablesInOrder>2</VariablesInOrder>
-                <IntegerPromotion>2</IntegerPromotion>
-                <uAregs>2</uAregs>
-                <UseInterruptVector>2</UseInterruptVector>
-                <Fuzzy>8</Fuzzy>
-                <Optimize>10</Optimize>
-                <WarningLevel>3</WarningLevel>
-                <SizeSpeed>2</SizeSpeed>
-                <ObjectExtend>2</ObjectExtend>
-                <ACallAJmp>2</ACallAJmp>
-                <InterruptVectorAddress>0</InterruptVectorAddress>
-                <VariousControls>
-                  <MiscControls></MiscControls>
-                  <Define></Define>
-                  <Undefine></Undefine>
-                  <IncludePath>../../hsk_libs/src/hsk_boot;../../hsk_libs/src/hsk_isr</IncludePath>
-                </VariousControls>
-              </C51>
-              <Ax51>
-                <UseMpl>2</UseMpl>
-                <UseStandard>2</UseStandard>
-                <UseCase>2</UseCase>
-                <UseMod51>2</UseMod51>
-                <VariousControls>
-                  <MiscControls></MiscControls>
-                  <Define></Define>
-                  <Undefine></Undefine>
-                  <IncludePath>../../hsk_libs/src/hsk_boot;../../hsk_libs/src/hsk_isr</IncludePath>
-                </VariousControls>
-              </Ax51>
-            </Group51>
-          </GroupOption>
+          <GroupName>HSK_LIBS::HSK_BOOT</GroupName>
           <Files>
+            <File>
+              <FileName>startup.a51</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\hsk_libs\src\hsk_boot\startup.a51</FilePath>
+            </File>
             <File>
               <FileName>hsk_boot.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../hsk_libs/src/hsk_boot/hsk_boot.c</FilePath>
+              <FilePath>..\..\hsk_libs\src\hsk_boot\hsk_boot.c</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>HSK_LIBS::HSK_ISR</GroupName>
+          <Files>
             <File>
               <FileName>hsk_isr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../hsk_libs/src/hsk_isr/hsk_isr.c</FilePath>
+              <FilePath>..\..\hsk_libs\src\hsk_isr\hsk_isr.c</FilePath>
             </File>
           </Files>
         </Group>
