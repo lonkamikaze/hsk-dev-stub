@@ -26,9 +26,6 @@ void main(void) {
  * Initialize ports, timers and ISRs.
  */
 void init(void) {
-	/* Activate xdata access. */
-	hsk_boot_mem();
-
 	/* Activate external clock. */
 	hsk_boot_extClock(CLK);
 }
