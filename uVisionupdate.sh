@@ -17,6 +17,7 @@ echo "$libs" | sed 's/^/	/' 1>&2
 echo "Preparing header include directories ..." 1>&2
 LIBDIR="$(echo "$LIBDIR" | tr '/' '\\')"
 CANDIR="$(echo "$CANDIR" | tr '/' '\\')"
+SIMDIR="$(echo "$LIBPROJDIR/uVision/simulator.ini" | tr '/' '\\')"
 
 # Create groups
 echo "Creating library groups ..." 1>&2
@@ -149,6 +150,9 @@ awk -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvproj.bak \
 	-select:/ \
 	-search:OverlayString \
 	-set:"$overlays" \
+	-select:/ \
+	-search:SimDlls/InitializationFile \
+	-set:"..\\$SIMDIR" \
 	-select:/ \
 	-search:"Group/GroupName=HSK_LIBS/.." \
 	-delete \
