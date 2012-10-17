@@ -319,7 +319,9 @@
             <CaseSensitiveSymbols>0</CaseSensitiveSymbols>
             <WarningLevel>2</WarningLevel>
             <DataOverlaying>1</DataOverlaying>
-            <OverlayString>* ~ (hsk_boot_isr_nmipll),
+            <OverlayString>* ! (hsk_isr_root1),
+hsk_isr_root1 ! (ISR_hsk_isr8, ISR_hsk_isr9, ISR_hsk_isr5, ISR_hsk_isr6),
+* ~ (hsk_boot_isr_nmipll),
 ISR_hsk_isr14 ! (hsk_boot_isr_nmipll)</OverlayString>
             <MiscControls>REMOVEUNUSED</MiscControls>
             <DisableWarningNumbers></DisableWarningNumbers>

@@ -136,7 +136,7 @@ echo "Getting call tree changes for overlay optimisation ..." 1>&2
 overlays="$(awk -f ${LIBPROJDIR}/scripts/overlays.awk $incfiles $(find src/ -name \*.c))"
 echo "$overlays" | sed -e 's/^/	/' -e 's/[[:cntrl:]]$//' 1>&2
 
-echo "Updating uVision/hsk_dev.uvproj ..." 1>&2
+echo "Updating uVision/hsk_dev.uvopt ..." 1>&2
 # This is a bug workaround see ARM case 531308
 cp uVision/hsk_dev.uvopt uVision/hsk_dev.uvopt.bak
 awk -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvopt.bak \
@@ -147,6 +147,7 @@ awk -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvopt.bak \
 		&& rm uVision/hsk_dev.uvopt.bak \
 		|| mv uVision/hsk_dev.uvopt.bak uVision/hsk_dev.uvopt
 
+echo "Updating uVision/hsk_dev.uvproj ..." 1>&2
 cp uVision/hsk_dev.uvproj uVision/hsk_dev.uvproj.bak
 awk -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvproj.bak \
 	-search:TargetName \
