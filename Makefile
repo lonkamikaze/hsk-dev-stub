@@ -44,6 +44,7 @@ printEnv:
 	@echo export INCDIR=\"${INCDIR}\"
 	@echo export LIBDIR=\"${LIBDIR}\"
 	@echo export CANDIR=\"${CANDIR}\"
+	@echo export CPP=\"${CPP}\"
 
 html: doc
 	@rm -rf html
