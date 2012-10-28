@@ -295,7 +295,7 @@
             <InterruptVectorAddress>0</InterruptVectorAddress>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define></Define>
+              <Define>__xdata, __pdata, __idata</Define>
               <Undefine></Undefine>
               <IncludePath>..\..\hsk_libs\src;..\..\CAN\src</IncludePath>
             </VariousControls>
