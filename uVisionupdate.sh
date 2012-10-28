@@ -15,9 +15,9 @@ libs="$(
 echo "$libs" | sed 's/^/	/' 1>&2
 
 echo "Preparing header include directories ..." 1>&2
-LIBDIR="$(echo "$LIBDIR" | tr '/' '\\')"
-CANDIR="$(echo "$CANDIR" | tr '/' '\\')"
-SIMDIR="$(echo "$LIBPROJDIR/uVision/simulator.ini" | tr '/' '\\')"
+_LIBDIR="$(echo "$LIBDIR" | tr '/' '\\')"
+_CANDIR="$(echo "$CANDIR" | tr '/' '\\')"
+_SIMDIR="$(echo "$LIBPROJDIR/uVision/simulator.ini" | tr '/' '\\')"
 
 # Create groups
 echo "Creating library groups ..." 1>&2
@@ -112,7 +112,7 @@ libdeps="$libdeps
 	-selectInserted
 	-insert:FileName=startup.a51
 	-insert:FileType=2
-	-insert:FilePath=..\\$LIBDIR\\hsk_boot\\startup.a51"
+	-insert:FilePath=..\\$_LIBDIR\\hsk_boot\\startup.a51"
 
 for lib in $libs; do
 	test ! -f "$lib" && continue
@@ -133,7 +133,7 @@ for lib in $libs; do
 done
 
 echo "Getting call tree changes for overlay optimisation ..." 1>&2
-overlays="$(awk -f ${LIBPROJDIR}/scripts/overlays.awk $incfiles $(find src/ -name \*.c))"
+overlays="$(awk -f ${LIBPROJDIR}/scripts/overlays.awk $incfiles $(find src/ -name \*.c) -I$INCDIR -I$LIBDIR -I$CANDIR)"
 echo "$overlays" | sed -e 's/^/	/' -e 's/[[:cntrl:]]$//' 1>&2
 
 echo "Updating uVision/hsk_dev.uvopt ..." 1>&2
@@ -141,7 +141,7 @@ echo "Updating uVision/hsk_dev.uvopt ..." 1>&2
 cp uVision/hsk_dev.uvopt uVision/hsk_dev.uvopt.bak
 awk -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvopt.bak \
 	-search:DebugOpt/sIfile \
-	-set:"..\\$SIMDIR" \
+	-set:"..\\$_SIMDIR" \
 	-select:/ \
 	-print > uVision/hsk_dev.uvopt \
 		&& rm uVision/hsk_dev.uvopt.bak \
@@ -157,13 +157,13 @@ awk -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvproj.bak \
 	-set:"$project" \
 	-select:/ \
 	-search:Target51/C51/VariousControls/IncludePath \
-	-set:"..\\$LIBDIR;..\\$CANDIR" \
+	-set:"..\\$_LIBDIR;..\\$_CANDIR" \
 	-select:/ \
 	-search:OverlayString \
 	-set:"$overlays" \
 	-select:/ \
 	-search:SimDlls/InitializationFile \
-	-set:"..\\$SIMDIR" \
+	-set:"..\\$_SIMDIR" \
 	-select:/ \
 	-search:"Group/GroupName=HSK_LIBS/.." \
 	-delete \
