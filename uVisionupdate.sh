@@ -138,14 +138,15 @@ echo "$overlays" | sed -e 's/^/	/' -e 's/[[:cntrl:]]$//' 1>&2
 
 echo "Updating uVision/hsk_dev.uvopt ..." 1>&2
 # This is a bug workaround see ARM case 531308
-cp uVision/hsk_dev.uvopt uVision/hsk_dev.uvopt.bak
-awk -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvopt.bak \
-	-search:DebugOpt/sIfile \
-	-set:"..\\$_SIMDIR" \
-	-select:/ \
-	-print > uVision/hsk_dev.uvopt \
-		&& rm uVision/hsk_dev.uvopt.bak \
-		|| mv uVision/hsk_dev.uvopt.bak uVision/hsk_dev.uvopt
+if cp uVision/hsk_dev.uvopt uVision/hsk_dev.uvopt.bak 2> /dev/null; then
+	awk -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvopt.bak \
+		-search:DebugOpt/sIfile \
+		-set:"..\\$_SIMDIR" \
+		-select:/ \
+		-print > uVision/hsk_dev.uvopt \
+			&& rm uVision/hsk_dev.uvopt.bak \
+			|| mv uVision/hsk_dev.uvopt.bak uVision/hsk_dev.uvopt
+fi
 
 echo "Updating uVision/hsk_dev.uvproj ..." 1>&2
 cp uVision/hsk_dev.uvproj uVision/hsk_dev.uvproj.bak
