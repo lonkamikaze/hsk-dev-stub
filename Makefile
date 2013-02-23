@@ -99,7 +99,7 @@ printEnv::
 	@echo export CANDIR=\"${CANDIR}\"
 	@echo export CPP=\"${CPP}\"
 
-uVision::
+uVision µVision::
 	@sh uVisionupdate.sh
 
 html: doc
