@@ -38,7 +38,7 @@
 # Build with SDCC.
 BUILDDIR=	bin.sdcc
 CC=		sdcc
-CFLAGS=		-mmcs51 --peep-file ${LIBPROJDIR}/peeprules.sdcc --xram-loc 0xF000 --xram-size 3072 -I${INCDIR} -I${CANDIR} -I${LIBDIR}
+CFLAGS=		-I${INCDIR} -I${CANDIR} -I${LIBDIR}
 
 # Sane default for uVisionupdate.sh.
 CPP=		cpp
@@ -46,6 +46,9 @@ CPP=		cpp
 # Locate related projects.
 LIBPROJDIR=	../hsk_libs
 CANPROJDIR=	../CAN
+
+# Configuration files.
+CONFDIR=	${LIBPROJDIR}/conf
 
 # Include directories from the related projects.
 INCDIR=		${LIBPROJDIR}/inc
@@ -84,6 +87,14 @@ include Makefile.local
 
 build:
 
+# Configure SDCC.
+_SDCC_MK:=	$(shell env CC="${CC}" sh ${LIBPROJDIR}/scripts/sdcc.sh ${CONFDIR}/sdcc > sdcc.mk)
+_SDCC_MK!=	env CC="${CC}" sh ${LIBPROJDIR}/scripts/sdcc.sh ${CONFDIR}/sdcc > sdcc.mk
+
+# Gmake style, works with FreeBSD make, too
+include sdcc.mk
+
+# Generate build
 _BUILD_MK:=	$(shell sh ${LIBPROJDIR}/scripts/build.sh src/ ${LIBDIR}/ ${CANDIR}/ > build.mk)
 _BUILD_MK!=	sh ${LIBPROJDIR}/scripts/build.sh src/ ${LIBDIR}/ ${CANDIR}/ > build.mk
 
