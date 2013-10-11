@@ -16,7 +16,7 @@ echo "$libs" | sed 's/^/	/' 1>&2
 
 echo "Preparing header include directories ..." 1>&2
 _LIBDIR="$(echo "$LIBDIR" | tr '/' '\\')"
-_CANDIR="$(echo "$CANDIR" | tr '/' '\\')"
+_GENDIR="$(echo "$GENDIR" | tr '/' '\\')"
 _SIMDIR="$(echo "$LIBPROJDIR/uVision/simulator.ini" | tr '/' '\\')"
 
 # Create groups
@@ -133,7 +133,7 @@ for lib in $libs; do
 done
 
 echo "Getting call tree changes for overlay optimisation ..." 1>&2
-overlays="$(awk -f ${LIBPROJDIR}/scripts/overlays.awk $incfiles $(find src/ -name \*.c) -I$INCDIR -I$LIBDIR -I$CANDIR)"
+overlays="$(awk -f ${LIBPROJDIR}/scripts/overlays.awk $incfiles $(find src/ -name \*.c) -I$INCDIR -I$LIBDIR -I$GENDIR)"
 echo "$overlays" | sed -e 's/^/	/' -e 's/[[:cntrl:]]$//' 1>&2
 
 echo "Updating uVision/hsk_dev.uvopt ..." 1>&2
@@ -158,7 +158,7 @@ awk -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvproj.bak \
 	-set:"$project" \
 	-select:/ \
 	-search:Target51/C51/VariousControls/IncludePath \
-	-set:"..\\$_LIBDIR;..\\$_CANDIR" \
+	-set:"..\\$_LIBDIR;..\\$_GENDIR" \
 	-select:/ \
 	-search:OverlayString \
 	-set:"$overlays" \

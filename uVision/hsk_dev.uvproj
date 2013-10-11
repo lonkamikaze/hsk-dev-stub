@@ -297,7 +297,7 @@
               <MiscControls></MiscControls>
               <Define>__xdata, __pdata, __idata</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\hsk_libs\src;..\..\CAN\src</IncludePath>
+              <IncludePath>..\..\hsk_libs\src;..\gen</IncludePath>
             </VariousControls>
           </C51>
           <Ax51>
