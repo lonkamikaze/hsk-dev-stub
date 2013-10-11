@@ -137,7 +137,7 @@ printEnv::
 uVision µVision::
 	@sh uVisionupdate.sh
 
-html: html/doc html/doc-dbc
+html: html/doc html/dbc
 
 html/doc: doc
 	@rm -rf html/doc || true
