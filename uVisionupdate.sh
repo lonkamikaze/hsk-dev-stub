@@ -10,7 +10,7 @@ PROJECT="$(echo "$project" | tr '[:lower:]' '[:upper:]')"
 # Get required .c files from the libraries.
 echo "Getting .c files to include ..." 1>&2
 libs="$(
-	find src/ -name \*.c | xargs awk -f $LIBPROJDIR/scripts/includes.awk src/ "$LIBDIR/" \
+	find src/ -name \*.c | xargs $AWK -f $LIBPROJDIR/scripts/includes.awk src/ "$LIBDIR/" \
 		| sed -ne "/^src\//d" -e "s,\.[ch]:.*,.c,p" | sort -u)"
 echo "$libs" | sed 's/^/	/' 1>&2
 
@@ -133,13 +133,13 @@ for lib in $libs; do
 done
 
 echo "Getting call tree changes for overlay optimisation ..." 1>&2
-overlays="$(awk -f ${LIBPROJDIR}/scripts/overlays.awk $incfiles $(find src/ -name \*.c) -I$INCDIR -I$LIBDIR -I$GENDIR)"
+overlays="$($AWK -f ${LIBPROJDIR}/scripts/overlays.awk $incfiles $(find src/ -name \*.c) -I$INCDIR -I$LIBDIR -I$GENDIR)"
 echo "$overlays" | sed -e 's/^/	/' -e 's/[[:cntrl:]]$//' 1>&2
 
 echo "Updating uVision/hsk_dev.uvopt ..." 1>&2
 # This is a bug workaround see ARM case 531308
 if cp uVision/hsk_dev.uvopt uVision/hsk_dev.uvopt.bak 2> /dev/null; then
-	awk -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvopt.bak \
+	$AWK -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvopt.bak \
 		-search:DebugOpt/sIfile \
 		-set:"..\\$_SIMDIR" \
 		-select:/ \
@@ -150,7 +150,7 @@ fi
 
 echo "Updating uVision/hsk_dev.uvproj ..." 1>&2
 cp uVision/hsk_dev.uvproj uVision/hsk_dev.uvproj.bak
-awk -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvproj.bak \
+$AWK -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvproj.bak \
 	-search:TargetName \
 	-set:"$PROJECT" \
 	-select:/ \

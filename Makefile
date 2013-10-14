@@ -21,6 +21,7 @@
 #
 # | Assignment      | Function
 # |-----------------|---------------------------------------------------
+# | AWK             | The awk interpreter
 # | BUILDDIR        | SDCC output directory
 # | CC              | Compiler
 # | CFLAGS          | Compiler flags
@@ -46,7 +47,10 @@ CC=		sdcc
 CFLAGS=		-I${INCDIR} -I${GENDIR} -I${LIBDIR}
 
 # Sane default for uVisionupdate.sh.
-CPP=		cpp
+CPP?=		cpp
+
+# AWK interpreter.
+AWK?=		awk
 
 # Generateded headers.
 GENDIR=		gen
@@ -72,8 +76,8 @@ DATE:=		$(shell date +%Y-%m-%d)
 DATE!=		date +%Y-%m-%d
 
 # Use hg version with date fallback.
-VERSION:=	$(shell hg tip 2> /dev/null | awk '/^changeset/ {print $$2}' || echo ${DATE})
-VERSION!=	hg tip 2> /dev/null | awk '/^changeset/ {print $$2}' || echo ${DATE}
+VERSION:=	$(shell hg tip 2> /dev/null | ${AWK} '/^changeset/ {print $$2}' || echo ${DATE})
+VERSION!=	hg tip 2> /dev/null | ${AWK} '/^changeset/ {print $$2}' || echo ${DATE}
 
 # List of source files for generating dependencies documentation.
 SRC:=		$(shell find src/ -name \*.\[hc] -o -name \*.txt)
@@ -133,6 +137,7 @@ printEnv::
 	@echo export INCDIR=\"${INCDIR}\"
 	@echo export LIBDIR=\"${LIBDIR}\"
 	@echo export CPP=\"${CPP}\"
+	@echo export AWK=\"${AWK}\"
 
 uVision µVision::
 	@sh uVisionupdate.sh
@@ -196,5 +201,5 @@ clean-stale:
 	@rm -f build.mk sdcc.mk dbc.mk || true
 
 zip: pdf
-	@hg status -A | awk '$$1 != "I" {sub(/. /, "${PROJECT}/"); print}' | (cd .. && zip ${PROJECT}-${VERSION}.zip -\@ -r ${PROJECT}/pdf)
+	@hg status -A | ${AWK} '$$1 != "I" {sub(/. /, "${PROJECT}/"); print}' | (cd .. && zip ${PROJECT}-${VERSION}.zip -\@ -r ${PROJECT}/pdf)
 
