@@ -123,8 +123,8 @@ _DBC_MK:=	$(shell ${MAKE} DBCDIR=${DBCDIR} -f ${GENDIR}/dbc.mk dbc 1>&2)
 _DBC_MK!=	${MAKE} DBCDIR=${DBCDIR} -f ${GENDIR}/dbc.mk dbc 1>&2
 
 # Generate build
-_BUILD_MK:=	$(shell sh ${LIBPROJDIR}/scripts/build.sh src/ ${LIBDIR}/ ${GENDIR}/ > ${GENDIR}/build.mk)
-_BUILD_MK!=	sh ${LIBPROJDIR}/scripts/build.sh src/ ${LIBDIR}/ ${GENDIR}/ > ${GENDIR}/build.mk
+_BUILD_MK:=	$(shell sh ${LIBPROJDIR}/scripts/build.sh src/ ${INCDIR}/ ${LIBDIR}/ ${GENDIR}/ > ${GENDIR}/build.mk)
+_BUILD_MK!=	sh ${LIBPROJDIR}/scripts/build.sh src/ ${INCDIR}/ ${LIBDIR}/ ${GENDIR}/ > ${GENDIR}/build.mk
 
 # Gmake style, works with FreeBSD make, too
 include ${GENDIR}/build.mk
