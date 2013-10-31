@@ -93,7 +93,7 @@ PROJECT!=	pwd | xargs basename
 
 # Local config
 _LOCAL_MK:=	$(shell test -f Makefile.local || touch Makefile.local)
-_LOCAL_MK!=	test -f Makefile.local || touch Makefile.local
+_LOCAL_MK!=	test -f Makefile.local || touch Makefile.local ; echo
 
 # Gmake style, works with FreeBSD make, too
 include Makefile.local
@@ -102,29 +102,29 @@ build:
 
 # Create the generated content directory
 _GEN:=		$(shell mkdir -p ${GENDIR})
-_GEN!=		mkdir -p ${GENDIR}
+_GEN!=		mkdir -p ${GENDIR} ; echo
 
 # Configure SDCC.
 _SDCC_MK:=	$(shell env CC="${CC}" sh ${LIBPROJDIR}/scripts/sdcc.sh ${CONFDIR}/sdcc > ${GENDIR}/sdcc.mk)
-_SDCC_MK!=	env CC="${CC}" sh ${LIBPROJDIR}/scripts/sdcc.sh ${CONFDIR}/sdcc > ${GENDIR}/sdcc.mk
+_SDCC_MK!=	env CC="${CC}" sh ${LIBPROJDIR}/scripts/sdcc.sh ${CONFDIR}/sdcc > ${GENDIR}/sdcc.mk ; echo
 
 # Gmake style, works with FreeBSD make, too
 include ${GENDIR}/sdcc.mk
 
 # Generate dbc
 _DBC_MK:=	$(shell sh ${LIBPROJDIR}/scripts/dbc.sh ${CANPROJDIR}/ > ${GENDIR}/dbc.mk)
-_DBC_MK!=	sh ${LIBPROJDIR}/scripts/dbc.sh ${CANPROJDIR}/ > ${GENDIR}/dbc.mk
+_DBC_MK!=	sh ${LIBPROJDIR}/scripts/dbc.sh ${CANPROJDIR}/ > ${GENDIR}/dbc.mk ; echo
 
 # Gmake style, works with FreeBSD make, too
 include ${GENDIR}/dbc.mk
 
 # Make sure DBCs are generated before the build scripts are created
 _DBC_MK:=	$(shell ${MAKE} DBCDIR=${DBCDIR} -f ${GENDIR}/dbc.mk dbc 1>&2)
-_DBC_MK!=	${MAKE} DBCDIR=${DBCDIR} -f ${GENDIR}/dbc.mk dbc 1>&2
+_DBC_MK!=	${MAKE} DBCDIR=${DBCDIR} -f ${GENDIR}/dbc.mk dbc 1>&2 ; echo
 
 # Generate build
 _BUILD_MK:=	$(shell sh ${LIBPROJDIR}/scripts/build.sh src/ ${INCDIR}/ ${LIBDIR}/ ${GENDIR}/ > ${GENDIR}/build.mk)
-_BUILD_MK!=	sh ${LIBPROJDIR}/scripts/build.sh src/ ${INCDIR}/ ${LIBDIR}/ ${GENDIR}/ > ${GENDIR}/build.mk
+_BUILD_MK!=	sh ${LIBPROJDIR}/scripts/build.sh src/ ${INCDIR}/ ${LIBDIR}/ ${GENDIR}/ > ${GENDIR}/build.mk ; echo
 
 # Gmake style, works with FreeBSD make, too
 include ${GENDIR}/build.mk
