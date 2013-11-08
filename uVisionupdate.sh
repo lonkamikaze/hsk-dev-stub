@@ -7,6 +7,9 @@ eval "$(make printEnv)"
 project="$PROJECT"
 PROJECT="$(echo "$project" | tr '[:lower:]' '[:upper:]')"
 
+echo "Generating C-headers from DBCs ..." 1>&2
+make dbc
+
 # Get required .c files from the libraries.
 echo "Getting .c files to include ..." 1>&2
 libs="$(
