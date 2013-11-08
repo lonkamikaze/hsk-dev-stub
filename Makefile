@@ -47,7 +47,7 @@ CC=		sdcc
 CFLAGS=		-I${INCDIR} -I${GENDIR} -I${LIBDIR}
 
 # Sane default for uVisionupdate.sh.
-CPP?=		cpp
+CPP=		cpp
 
 # AWK interpreter.
 AWK?=		awk
@@ -100,36 +100,43 @@ include Makefile.local
 
 build:
 
+.PHONY: ${GENDIR}/sdcc.mk ${GENDIR}/dbc.mk ${GENDIR}/build.mk
+
 # Create the generated content directory
-_GEN:=		$(shell mkdir -p ${GENDIR})
-_GEN!=		mkdir -p ${GENDIR} ; echo
+${GENDIR}:
+	@mkdir -p ${GENDIR}
 
-# Configure SDCC.
-_SDCC_MK:=	$(shell env CC="${CC}" sh ${LIBPROJDIR}/scripts/sdcc.sh ${CONFDIR}/sdcc > ${GENDIR}/sdcc.mk)
-_SDCC_MK!=	env CC="${CC}" sh ${LIBPROJDIR}/scripts/sdcc.sh ${CONFDIR}/sdcc > ${GENDIR}/sdcc.mk ; echo
-
-# Gmake style, works with FreeBSD make, too
-include ${GENDIR}/sdcc.mk
+# Configure SDCC
+${GENDIR}/sdcc.mk: ${GENDIR}
+	@env CC="${CC}" sh ${LIBPROJDIR}/scripts/sdcc.sh ${CONFDIR}/sdcc > $@
 
 # Generate dbc
-_DBC_MK:=	$(shell sh ${LIBPROJDIR}/scripts/dbc.sh ${CANPROJDIR}/ > ${GENDIR}/dbc.mk)
-_DBC_MK!=	sh ${LIBPROJDIR}/scripts/dbc.sh ${CANPROJDIR}/ > ${GENDIR}/dbc.mk ; echo
-
-# Gmake style, works with FreeBSD make, too
-include ${GENDIR}/dbc.mk
-
-# Make sure DBCs are generated before the build scripts are created
-_DBC_MK:=	$(shell ${MAKE} DBCDIR=${DBCDIR} -f ${GENDIR}/dbc.mk dbc 1>&2)
-_DBC_MK!=	${MAKE} DBCDIR=${DBCDIR} -f ${GENDIR}/dbc.mk dbc 1>&2 ; echo
+${GENDIR}/dbc.mk: ${GENDIR}
+	@sh ${LIBPROJDIR}/scripts/dbc.sh ${CANPROJDIR}/ > $@
 
 # Generate build
-_BUILD_MK:=	$(shell sh ${LIBPROJDIR}/scripts/build.sh src/ ${INCDIR}/ ${LIBDIR}/ ${GENDIR}/ > ${GENDIR}/build.mk)
-_BUILD_MK!=	sh ${LIBPROJDIR}/scripts/build.sh src/ ${INCDIR}/ ${LIBDIR}/ ${GENDIR}/ > ${GENDIR}/build.mk ; echo
+${GENDIR}/build.mk: dbc ${GENDIR}
+	@sh ${LIBPROJDIR}/scripts/build.sh src/ ${INCDIR}/ ${LIBDIR}/ \
+	                                   ${GENDIR}/ > $@
 
-# Gmake style, works with FreeBSD make, too
-include ${GENDIR}/build.mk
+.PHONY: build all dbc
 
-printEnv::
+# Generate headers from CANdbs
+dbc: ${GENDIR}/dbc.mk
+	@${MAKE} DBCDIR=${DBCDIR} -f ${GENDIR}/dbc.mk $@
+
+${DBCDIR}: dbc
+
+# Perform build stage
+build all: ${GENDIR}/sdcc.mk ${GENDIR}/build.mk dbc
+	@env LIBPROJDIR="${LIBPROJDIR}" BUILDDIR="${BUILDDIR}" \
+	     OBJSUFX="${OBJSUFX}" HEXSUFX="${HEXSUFX}" \
+	     CPP="${CPP}" CC="${CC}" CFLAGS="${CFLAGS}" \
+	     ${MAKE} -r -f ${GENDIR}/sdcc.mk -f ${GENDIR}/build.mk $@
+
+.PHONY: printEnv uVision µVision
+
+printEnv:
 	@echo export PROJECT=\"${PROJECT}\"
 	@echo export LIBPROJDIR=\"${LIBPROJDIR}\"
 	@echo export CANPROJDIR=\"${CANPROJDIR}\"
@@ -139,7 +146,7 @@ printEnv::
 	@echo export CPP=\"${CPP}\"
 	@echo export AWK=\"${AWK}\"
 
-uVision µVision::
+uVision µVision:
 	@sh uVisionupdate.sh
 
 html: html/doc html/dbc
@@ -186,6 +193,8 @@ doc/latex/refman.pdf: doc
 doc-dbc/latex/refman.pdf: doc-dbc
 	@cd doc-dbc/latex/ && ${MAKE}
 
+.PHONY: clean clean-doc clean-doc-dbc clean-build clean-stale
+
 clean: clean-doc clean-doc-dbc clean-build clean-stale
 
 clean-doc:
@@ -199,6 +208,8 @@ clean-build:
 
 clean-stale:
 	@rm -f build.mk sdcc.mk dbc.mk || true
+
+.PHONY: zip
 
 zip: pdf
 	@hg status -A | ${AWK} '$$1 != "I" {sub(/. /, "${PROJECT}/"); print}' | (cd .. && zip ${PROJECT}-${VERSION}.zip -\@ -r ${PROJECT}/pdf)
