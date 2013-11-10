@@ -116,8 +116,9 @@ ${GENDIR}/dbc.mk: ${GENDIR}
 
 # Generate build
 ${GENDIR}/build.mk: dbc ${GENDIR}
-	@sh ${LIBPROJDIR}/scripts/build.sh src/ ${INCDIR}/ ${LIBDIR}/ \
-	                                   ${GENDIR}/ > $@
+	@env CPP="${CPP}" AWK="${AWK}" \
+	     sh ${LIBPROJDIR}/scripts/build.sh \
+                src/ ${INCDIR}/ ${LIBDIR}/ ${GENDIR}/ > $@
 
 .PHONY: build all dbc
 
@@ -131,7 +132,7 @@ ${DBCDIR}: dbc
 build all: ${GENDIR}/sdcc.mk ${GENDIR}/build.mk dbc
 	@env LIBPROJDIR="${LIBPROJDIR}" BUILDDIR="${BUILDDIR}" \
 	     OBJSUFX="${OBJSUFX}" HEXSUFX="${HEXSUFX}" \
-	     CPP="${CPP}" CC="${CC}" CFLAGS="${CFLAGS}" \
+	     CC="${CC}" CFLAGS="${CFLAGS}" \
 	     ${MAKE} -r -f ${GENDIR}/sdcc.mk -f ${GENDIR}/build.mk $@
 
 .PHONY: printEnv uVision µVision
