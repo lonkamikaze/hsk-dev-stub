@@ -1,8 +1,11 @@
-#!/bin/sh -f
+#!/bin/sh
+set -f
 
 IFS='
 '
 
+# Must not be set or GNU make produces problematic output on stdout
+unset MAKELEVEL
 eval "$(make printEnv)"
 project="$PROJECT"
 PROJECT="$(echo "$project" | tr '[:lower:]' '[:upper:]')"
