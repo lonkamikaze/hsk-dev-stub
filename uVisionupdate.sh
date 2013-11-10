@@ -15,9 +15,10 @@ make dbc
 
 # Get required .c files from the libraries.
 echo "Getting .c files to include ..." 1>&2
-libs="$(
-	find src/ -name \*.c | xargs $AWK -f $LIBPROJDIR/scripts/includes.awk src/ "$LIBDIR/" \
-		| sed -ne "/^src\//d" -e "s,\.[ch]:.*,.c,p" | sort -u)"
+libs="$(find src/ -name *.c \
+	     -exec $AWK -f $LIBPROJDIR/scripts/links.awk dummy=0 \
+	                -I$INCDIR/ -I$LIBDIR/ -I$GENDIR/ -DSDCC {} + \
+	| grep "^${LIBDIR%/}/" | sort -u)"
 echo "$libs" | sed 's/^/	/' 1>&2
 
 echo "Preparing header include directories ..." 1>&2
@@ -27,11 +28,18 @@ _SIMDIR="$(echo "$LIBPROJDIR/uVision/simulator.ini" | tr '/' '\\')"
 
 # Create groups
 echo "Creating library groups ..." 1>&2
+
+groupname() {
+	local name
+	name="${1%/*}"
+	name="${name##*/}"
+	echo "$name" | tr '[[:lower:]]' '[[:upper:]]' | sed 's/_/::/'
+}
+
 oldGroupname=
 for lib in $libs; do
 	test ! -f "$lib" && continue
-	groupname="${lib%/*}"
-	groupname="HSK_LIBS::$(echo "${groupname##*/}" | tr '[[:lower:]]' '[[:upper:]]')"
+	groupname="$(groupname "$lib")"
 	# Open new group
 	if [ "$oldGroupname" != "$groupname" ]; then
 		echo "	Create group: $groupname" 1>&2
@@ -110,10 +118,10 @@ done
 
 echo "Adding files ..." 1>&2
 libdeps="$libdeps
-	-search:Group/GroupName=HSK_LIBS::*/..
+	-search:Group/GroupName=*::*/..
 	-insert:Files
 	-select:/
-	-search:Group/GroupName=HSK_LIBS::HSK_BOOT/../Files
+	-search:Group/GroupName=*::BOOT/../Files
 	-insert:File
 	-selectInserted
 	-insert:FileName=startup.a51
@@ -123,8 +131,7 @@ libdeps="$libdeps
 for lib in $libs; do
 	test ! -f "$lib" && continue
 	incfiles="$incfiles${IFS}$lib"
-	groupname="${lib%/*}"
-	groupname="HSK_LIBS::$(echo "${groupname##*/}" | tr '[[:lower:]]' '[[:upper:]]')"
+	groupname="$(groupname "$lib")"
 	filename="${lib##*/}"
 	filepath="$(echo "$lib" | tr '/' '\\')"
 	echo "	Add file: $groupname/$filename" 1>&2
@@ -176,6 +183,9 @@ $AWK -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvproj.bak \
 	-delete \
 	-select:/ \
 	-search:"Group/GroupName=HSK_LIBS::*/.." \
+	-delete \
+	-select:/ \
+	-search:"Group/GroupName=*::*/.." \
 	-delete \
 	-select:/ \
 	-search:"Groups" \

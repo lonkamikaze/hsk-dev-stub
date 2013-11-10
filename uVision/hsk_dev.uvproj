@@ -375,7 +375,7 @@ ISR_hsk_isr14 ! (hsk_boot_isr_nmipll)</OverlayString>
           </Files>
         </Group>
         <Group>
-          <GroupName>HSK_LIBS::HSK_BOOT</GroupName>
+          <GroupName>HSK::BOOT</GroupName>
           <Files>
             <File>
               <FileName>startup.a51</FileName>
@@ -390,7 +390,7 @@ ISR_hsk_isr14 ! (hsk_boot_isr_nmipll)</OverlayString>
           </Files>
         </Group>
         <Group>
-          <GroupName>HSK_LIBS::HSK_ISR</GroupName>
+          <GroupName>HSK::ISR</GroupName>
           <Files>
             <File>
               <FileName>hsk_isr.c</FileName>
