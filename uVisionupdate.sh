@@ -16,7 +16,7 @@ make dbc
 # Get required .c files from the libraries.
 echo "Getting .c files to include ..." 1>&2
 libs="$(find src/ -name *.c \
-	     -exec $AWK -f $LIBPROJDIR/scripts/links.awk dummy=0 \
+	     -exec $AWK -f $LIBPROJDIR/scripts/depends.awk .c -link \
 	                -I$INCDIR/ -I$LIBDIR/ -I$GENDIR/ -DSDCC {} + \
 	| grep "^${LIBDIR%/}/" | sort -u)"
 echo "$libs" | sed 's/^/	/' 1>&2
