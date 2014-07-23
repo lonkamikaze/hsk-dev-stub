@@ -153,24 +153,24 @@ uVision µVision:
 html: html/doc html/dbc
 
 html/doc: doc
-	@rm -rf html/doc || true
+	@rm -rf html/doc ||:
 	@mkdir -p html
 	@cp -r doc/html html/doc
 
 html/dbc: doc-dbc
-	@rm -rf html/dbc || true
+	@rm -rf html/dbc ||:
 	@mkdir -p html
 	@cp -r doc-dbc/html html/dbc
 
 doc: ${SRC} doxygen.conf
-	@rm -rf doc || true
+	@rm -rf doc ||:
 	@mkdir -p doc
 	@echo PROJECT_NAME=${PROJECT} > doc/.conf
 	@echo PROJECT_NUMBER=${VERSION} >> doc/.conf
 	@cat doxygen.conf doc/.conf | doxygen -
 
 doc-dbc: ${DBCDIR} ${CONFDIR}/doxygen.dbc
-	@rm -rf doc-dbc || true
+	@rm -rf doc-dbc ||:
 	@mkdir -p doc-dbc
 	@echo PROJECT_NAME=\"${PROJECT}-dbc\" >> doc-dbc/.conf
 	@echo PROJECT_NUMBER=${VERSION} >> doc-dbc/.conf
@@ -199,16 +199,16 @@ doc-dbc/latex/refman.pdf: doc-dbc
 clean: clean-doc clean-doc-dbc clean-build clean-stale
 
 clean-doc:
-	@rm -rf doc || true
+	@rm -rf doc ||:
 
 clean-doc-dbc:
-	@rm -rf doc-dbc || true
+	@rm -rf doc-dbc ||:
 
 clean-build:
-	@rm -rf ${BUILDDIR} ${GENDIR} || true
+	@rm -rf ${BUILDDIR} ${GENDIR} ||:
 
 clean-stale:
-	@rm -f build.mk sdcc.mk dbc.mk || true
+	@rm -f build.mk sdcc.mk dbc.mk ||:
 
 .PHONY: zip
 
