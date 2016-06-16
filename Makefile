@@ -76,8 +76,8 @@ DATE:=		$(shell date +%Y-%m-%d)
 DATE!=		date +%Y-%m-%d
 
 # Use hg version with date fallback.
-VERSION:=	$(shell hg tip 2> /dev/null | ${AWK} '/^changeset/ {print $$2}' || echo ${DATE})
-VERSION!=	hg tip 2> /dev/null | ${AWK} '/^changeset/ {print $$2}' || echo ${DATE}
+VERSION:=	$(shell git rev-list HEAD --count || echo ${DATE})
+VERSION!=	git rev-list HEAD --count || echo ${DATE}
 
 # List of source files for generating dependencies documentation.
 SRC:=		$(shell find src/ -name \*.\[hc] -o -name \*.txt)
