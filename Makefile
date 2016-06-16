@@ -57,7 +57,7 @@ GENDIR=		gen
 DBCDIR=		${GENDIR}/dbc
 
 # Locate related projects.
-LIBPROJDIR=	../hsk_libs
+LIBPROJDIR=	../hsk-libs
 CANPROJDIR=	../CAN
 
 # Library project configuration files.

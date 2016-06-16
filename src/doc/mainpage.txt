@@ -5,9 +5,9 @@
 This project is a stub to clone when starting the development of a new
 device.
 
-The default location for hsk_libs, which is required for compiling,
-is <tt>../hsk_libs</tt>. Changing it without tracking it is possible by
-adjusting \c LIBDIR and \c INCDIR by setting them in \c Makefile.local.
+The default location for hsk-libs, which is required for compiling,
+is <tt>../hsk-libs</tt>. Changing it without tracking it is possible by
+setting \c LIBPROJDIR in \c Makefile.local.
 
 After setting the new project up, run \c uVisionupdate.sh to update the
 µVision project file. The \c uVisionupdate.sh script also generates
