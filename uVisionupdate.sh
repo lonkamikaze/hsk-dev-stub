@@ -149,21 +149,21 @@ echo "Getting call tree changes for overlay optimisation ..." 1>&2
 overlays="$($AWK -f ${LIBPROJDIR}/scripts/overlays.awk $incfiles $(find src/ -name \*.c) -I$INCDIR -I$LIBDIR -I$GENDIR)"
 echo "$overlays" | sed -e 's/^/	/' -e 's/[[:cntrl:]]$//' 1>&2
 
-echo "Updating uVision/hsk_dev.uvopt ..." 1>&2
+echo "Updating uVision/hsk-ecu.uvopt ..." 1>&2
 # This is a bug workaround see ARM case 531308
-if cp uVision/hsk_dev.uvopt uVision/hsk_dev.uvopt.bak 2> /dev/null; then
-	$AWK -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvopt.bak \
+if cp uVision/hsk-ecu.uvopt uVision/hsk-ecu.uvopt.bak 2> /dev/null; then
+	$AWK -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk-ecu.uvopt.bak \
 		-search:DebugOpt/sIfile \
 		-set:"..\\$_SIMDIR" \
 		-select:/ \
-		-print > uVision/hsk_dev.uvopt \
-			&& rm uVision/hsk_dev.uvopt.bak \
-			|| mv uVision/hsk_dev.uvopt.bak uVision/hsk_dev.uvopt
+		-print > uVision/hsk-ecu.uvopt \
+			&& rm uVision/hsk-ecu.uvopt.bak \
+			|| mv uVision/hsk-ecu.uvopt.bak uVision/hsk-ecu.uvopt
 fi
 
-echo "Updating uVision/hsk_dev.uvproj ..." 1>&2
-cp uVision/hsk_dev.uvproj uVision/hsk_dev.uvproj.bak
-$AWK -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvproj.bak \
+echo "Updating uVision/hsk-ecu.uvproj ..." 1>&2
+cp uVision/hsk-ecu.uvproj uVision/hsk-ecu.uvproj.bak
+$AWK -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk-ecu.uvproj.bak \
 	-search:TargetName \
 	-set:"$PROJECT" \
 	-select:/ \
@@ -191,7 +191,7 @@ $AWK -f ${LIBPROJDIR}/scripts/xml.awk uVision/hsk_dev.uvproj.bak \
 	-search:"Groups" \
 	$libdeps \
 	-select:/ \
-	-print > uVision/hsk_dev.uvproj \
-		&& rm uVision/hsk_dev.uvproj.bak \
-		|| mv uVision/hsk_dev.uvproj.bak uVision/hsk_dev.uvproj
+	-print > uVision/hsk-ecu.uvproj \
+		&& rm uVision/hsk-ecu.uvproj.bak \
+		|| mv uVision/hsk-ecu.uvproj.bak uVision/hsk-ecu.uvproj
 
