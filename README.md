@@ -20,7 +20,7 @@ XC878 µC Project Docs
 ---------------------
 
 * [ECU project stub (html)](https://lonkamikaze.github.io/hsk-ecu-stub/ecu/)
-* [ECU project stub (html)](https://lonkamikaze.github.io/hsk-ecu-stub/ecu/hsk-ecu-stub.pdf)
+* [ECU project stub (pdf)](https://lonkamikaze.github.io/hsk-ecu-stub/ecu/hsk-ecu-stub.pdf)
 * [Library developers' manual (html)](https://lonkamikaze.github.io/hsk-libs/dev/)
 * [Library developers' manual (pdf)](https://lonkamikaze.github.io/hsk-libs/dev/hsk-libs-dev.pdf)
 * [Library users' manual (html)](https://lonkamikaze.github.io/hsk-libs/user/)
