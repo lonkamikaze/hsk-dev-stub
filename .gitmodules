@@ -1,3 +1,7 @@
 [submodule "hsk-libs"]
 	path = hsk-libs
 	url = ../hsk-libs.git
+[submodule "gh-pages"]
+	path = gh-pages
+	url = ../hsk-ecu-stub.git
+	branch = gh-pages
